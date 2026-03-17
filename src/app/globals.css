@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f57c00;
+  --color-secondary: #ff9800;
+  --color-accent: #e7a21a;
+  --color-beige: #f5e8d6;
+  --color-dark: #1a1a1a;
+  --color-neutral: #f7f7f7;
+
+  --font-serif: var(--font-playfair), serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-accent: var(--font-great-vibes), cursive;
+
+  --animate-fade-up: fadeUp 0.5s ease-out forwards;
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-zoom-in: zoomIn 0.5s ease-out forwards;
+
+  @keyframes fadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes zoomIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-beige text-dark scroll-smooth;
+  }
+}
