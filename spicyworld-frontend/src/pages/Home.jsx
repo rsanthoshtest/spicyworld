@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 
 const heroSlides = [
     {
@@ -49,7 +49,7 @@ const Home = () => {
     useEffect(() => {
         const fetchPopular = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/foods`);
+                const res = await api.get(`/api/foods`);
                 setPopularFoods(res.data.slice(0, 4));
             } catch (err) {
                 console.error("Error fetching popular foods", err);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 
 const Orders = () => {
@@ -10,7 +10,7 @@ const Orders = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders/user`);
+                const res = await api.get(`/api/orders/user`);
                 setOrders(res.data);
             } catch (err) {
                 console.error("Fetch orders failed", err);

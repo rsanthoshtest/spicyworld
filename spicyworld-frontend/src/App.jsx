@@ -34,6 +34,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  console.log("🌐 Production API Validation:", process.env.NEXT_PUBLIC_API_URL);
   return (
     <Router>
       <AuthProvider>

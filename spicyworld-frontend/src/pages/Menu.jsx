@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +26,7 @@ const Menu = () => {
         const fetchFoods = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/foods`);
+                const res = await api.get(`/api/foods`);
                 setFoods(res.data);
                 setFilteredFoods(res.data);
                 setError(null);
