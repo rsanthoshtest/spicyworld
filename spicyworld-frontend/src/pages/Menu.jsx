@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { FoodCard, AddToCartButton } from '../components/ui/FoodCard';
 
 const Menu = () => {
     const [foods, setFoods] = useState([]);
@@ -250,20 +251,33 @@ const Menu = () => {
                         </div>
                     ) : (
                         <>
-                            {search === '' && category === 'All' && !vegOnly && !chefSpecialOnly && priceRange === 1000 && (
-                                <div className="mb-14">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <span className="text-2xl">🔥</span>
-                                        <h2 className="text-2xl font-black text-dark tracking-tight">Popular Today</h2>
+                            {search === '' && category === 'All' && !vegOnly && !chefSpecialOnly && priceRange === 1000 && foods.length > 0 && (
+                                <div className="mb-12 bg-gradient-to-br from-orange-50/80 to-orange-100/30 rounded-[2.5rem] p-6 lg:p-8 border border-orange-100 shadow-[0_10px_40px_rgba(245,124,0,0.05)] relative overflow-hidden">
+                                    <div className="absolute -top-32 -right-32 w-96 h-96 bg-orange-200/40 rounded-full blur-[80px] pointer-events-none"></div>
+                                    <div className="flex items-center justify-between mb-8 relative z-10 border-b border-orange-200/50 pb-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-3xl animate-bounce-slow drop-shadow-sm">🔥</span>
+                                            <h2 className="text-2xl font-black text-dark tracking-tight">Popular Today</h2>
+                                        </div>
+                                        <span className="hidden sm:inline-block text-[10px] font-black tracking-widest uppercase text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full shadow-sm">Top Picks</span>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {foods.filter(f => f.isBestseller).slice(0, 4).map((food) => (
-                                            <FoodCard key={'pop-'+food._id} food={food} onClick={() => setSelectedDish(food)} />
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                                        {(foods.filter(f => f.isBestseller).length > 0
+                                            ? foods.filter(f => f.isBestseller)
+                                            : [...foods].sort((a, b) => (b.rating || 0) - (a.rating || 0))
+                                        ).slice(0, 6).map((food) => (
+                                            <FoodCard key={'pop-' + food._id} food={{ ...food, isTrending: true }} onClick={() => setSelectedDish(food)} />
                                         ))}
                                     </div>
-                                    <div className="h-px bg-gray-100 my-12 w-full"></div>
                                 </div>
                             )}
+                            
+                            {/* Subheading & Divider for All Dishes */}
+                            <div className="flex items-center gap-3 mb-8 pt-6 border-t border-gray-100/80">
+                                <span className="text-xl mx-1 grayscale opacity-80">🍽️</span>
+                                <h3 className="text-xl font-black text-dark tracking-tight">Explore Full Menu</h3>
+                                <span className="ml-auto text-[10px] font-black tracking-widest uppercase text-gray-400">{filteredFoods.length} DISHES</span>
+                            </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
                                 <AnimatePresence>
@@ -382,144 +396,6 @@ const Menu = () => {
             </AnimatePresence>
 
         </div>
-    );
-};
-
-// Refactored Food Card Component
-const FoodCard = ({ food, onClick }) => {
-    // TASK 6 - Validate before render. If core fields are missing, return null to avoid crashing UI
-    if (!food || !food.name || !food.price) return null;
-
-    // Strict Fallback URL
-    const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600";
-
-    return (
-        <motion.div 
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-300 overflow-hidden cursor-pointer flex flex-col group h-full"
-            onClick={onClick}
-        >
-            {/* Image Container with fixed Aspect Ratio and Cover */}
-            <div className="h-56 relative overflow-hidden bg-gray-50 flex-shrink-0">
-                <img 
-                    src={food.image || FALLBACK_IMAGE} 
-                    alt={food.name} 
-                    loading="lazy" // TASK 5 - Image Loading Improvement
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" // TASK 5 - Slight hover zoom (scale-105)
-                    onError={(e) => { 
-                        if (e.target.src !== FALLBACK_IMAGE) e.target.src = FALLBACK_IMAGE; 
-                    }}
-                />
-                
-                {/* Badges Overlay */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                    <div className={`px-2 py-1 rounded bg-white/90 backdrop-blur-sm border flex items-center gap-1.5 shadow-sm ${food.isVeg ? 'border-green-200 text-green-700' : 'border-red-200 text-red-600'}`}>
-                         <div className={`w-2 h-2 rounded-full ${food.isVeg ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                         <span className="text-[10px] font-black tracking-widest">{food.isVeg ? 'VEG' : 'NON-VEG'}</span>
-                    </div>
-                </div>
-
-                {/* Bestseller/Trending Badge */}
-                {food.isBestseller && (
-                    <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm border-2 border-primary text-primary px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 z-10">
-                        <span>🔥</span>
-                        <span className="text-[10px] font-black tracking-widest uppercase">Bestseller</span>
-                    </div>
-                )}
-
-                {/* Chef's Special Badge */}
-                {food.isChefSpecial && (
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-accent text-white px-3 py-1 rounded shadow-sm flex items-center gap-1.5 z-10">
-                        <span className="text-sm">👨‍🍳</span>
-                        <span className="text-[10px] font-black tracking-widest">SPECIAL</span>
-                    </div>
-                )}
-            </div>
-
-            {/* Content Container */}
-            <div className="p-6 flex flex-col flex-grow">
-                {/* Star Ratings replacing Chili top right */}
-                <div className="flex justify-between items-center mb-2">
-                    <div className="flex text-amber-400 text-sm">
-                        {[...Array(5)].map((_, i) => (
-                            <span key={i}>{i < Math.floor(food.rating || 4.5) ? '★' : '☆'}</span>
-                        ))}
-                        <span className="text-gray-400 text-xs ml-1 mt-0.5 font-bold">{food.rating || 4.5}</span>
-                    </div>
-                    {/* Minimal Spice Indication text instead of large chilis above */}
-                    {food.spicyLevel > 0 && (
-                        <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 flex items-center">
-                            🌶️ {food.spicyLevel <= 2 ? 'Mild' : food.spicyLevel <= 3 ? 'Medium' : 'Spicy'}
-                        </span>
-                    )}
-                </div>
-
-                <h3 className="text-lg font-black text-dark tracking-tight leading-tight group-hover:text-primary transition-colors mb-2 line-clamp-1">
-                    {food.name}
-                </h3>
-                
-                <p className="text-sm text-grayCustom mb-6 line-clamp-2 h-10 font-medium leading-relaxed flex-grow">
-                    {food.description || "A delicious preparation from SpicyWorld's kitchen."}
-                </p>
-
-                {/* Footer with Price & Clean Add to Cart */}
-                <div className="flex items-center justify-between pt-5 border-t border-gray-50 mt-auto" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">Price</span>
-                        <span className="text-2xl font-black text-dark tracking-tighter">₹{food.price}</span>
-                    </div>
-                    
-                    <AddToCartButton food={food} />
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// Reusable AddToCart Button component to keep cards/modals clean
-const AddToCartButton = ({ food, onClick, large = false }) => {
-    const { addToCart } = useCart();
-    const { user } = useAuth();
-    const navigate = useNavigate();
-    const [isAdded, setIsAdded] = useState(false);
-
-    const handleAdd = (e) => {
-        e.stopPropagation(); // Prevention modal open when clicking button on card
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-        addToCart(food);
-        setIsAdded(true);
-        setTimeout(() => setIsAdded(false), 1500);
-        if (onClick) onClick(); // optional callback (e.g., closing modal)
-    };
-
-    return (
-        <button 
-            onClick={handleAdd}
-            className={`
-                flex items-center justify-center gap-2 rounded-xl font-black tracking-widest uppercase transition-all duration-300
-                ${large ? 'px-8 py-4 text-sm' : 'px-5 py-2.5 text-xs'}
-                ${isAdded 
-                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' 
-                    : 'bg-dark text-white hover:bg-primary hover:shadow-[0_8px_20px_rgba(245,124,0,0.3)]'
-                }
-            `}
-        >
-            {isAdded ? (
-                <>
-                    <span>✓</span> <span>Added</span>
-                </>
-            ) : (
-                <>
-                    <span>+</span> <span>Add to Cart</span>
-                </>
-            )}
-        </button>
     );
 };
 

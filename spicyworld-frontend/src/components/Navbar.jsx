@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { cartCount } = useCart();
+  const { cartCount, setIsCartOpen } = useCart();
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -65,7 +65,7 @@ const Navbar = () => {
         {/* Right Icons */}
         <div className="flex items-center gap-6">
           {/* Cart */}
-          <Link to="/cart" className="relative group p-2">
+          <button onClick={() => setIsCartOpen(true)} className="relative group p-2">
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 transition-colors duration-300 ${shouldBeSolid ? 'text-dark' : 'text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -83,7 +83,7 @@ const Navbar = () => {
                 )}
               </AnimatePresence>
             </motion.div>
-          </Link>
+          </button>
 
           {/* User Profile */}
           <div className="hidden md:block">

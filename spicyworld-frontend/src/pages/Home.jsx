@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { FoodCard } from '../components/ui/FoodCard';
 
 const heroSlides = [
     {
@@ -159,53 +160,9 @@ const Home = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                         {popularFoods.map((food, index) => (
-                            <motion.div
-                                key={food._id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                                className="card-premium group hover:shadow-2xl transition-shadow duration-500"
-                            >
-                                <div className="h-64 overflow-hidden relative">
-                                    <img 
-                                        src={food.image} 
-                                        alt={food.name} 
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                                        onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop"; }}
-                                    />
-                                    <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black text-white shadow-lg z-10 ${food.isVeg ? 'bg-green-600' : 'bg-accent'}`}>
-                                        {food.isVeg ? 'VEG' : 'NON-VEG'}
-                                    </div>
-                                    {index === 0 && (
-                                        <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-600 text-dark px-3 py-1 rounded-full text-[10px] font-black shadow-[0_5px_15px_rgba(251,191,36,0.5)] flex items-center gap-1 z-10 hover:scale-105 transition-transform">
-                                            <span>★</span> CHEF SPECIAL
-                                        </div>
-                                    )}
-                                    <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                                        <Link to="/menu" className="text-white text-sm font-bold flex items-center gap-2 hover:text-primary transition-colors">
-                                            QUICK VIEW &rarr;
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div className="p-8 relative bg-white z-20">
-                                    <h3 className="text-xl font-bold mb-3 font-playfair group-hover:text-primary transition-colors line-clamp-2 min-h-[56px]">{food.name}</h3>
-                                    <div className="flex justify-between items-center mt-2">
-                                        <span className="text-2xl font-black text-primary">₹{food.price}</span>
-                                        <div className="flex gap-0.5">
-                                            {[...Array(food.spicyLevel)].map((_, i) => (
-                                                <span key={i} className="text-orange-500 text-sm">🌶</span>
-                                            ))}
-                                            {[...Array(5 - food.spicyLevel)].map((_, i) => (
-                                                <span key={i + food.spicyLevel} className="text-gray-300 text-sm">★</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-grayCustom mt-4 hidden group-hover:block animate-fade-in-up">
-                                        Authentic spices blended perfectly to deliver an unforgettable taste experience.
-                                    </p>
-                                </div>
-                            </motion.div>
+                            <div key={food._id} className="h-full">
+                                <FoodCard food={food} onClick={() => window.location.href = '/menu'} />
+                            </div>
                         ))}
                     </div>
 
